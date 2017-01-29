@@ -47,7 +47,8 @@ function loginMenuController ($scope, $location, $rootScope, loginService) {
         var conn = mysql.createConnection({
             host     : newConnection.host,
             user     : newConnection.username,
-            password : newConnection.password
+            password : newConnection.password,
+            multipleStatements: true
         });
 
         conn.connect(function(err) {

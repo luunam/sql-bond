@@ -1,3 +1,5 @@
+var format = require('string-format');
+
 angular.module('homeModule', ['ngMaterial', 'ngRoute', 'md.data.table'])
     .config(['$mdThemingProvider', function ($mdThemingProvider) {
         'use strict';
@@ -42,6 +44,14 @@ function homeController($scope, $location, homeService) {
     $scope.changeDatabase = changeDatabase;
     $scope.selectTable = selectTable;
 
+    $scope.tables = [];
+    $scope.colNames = [];
+    $scope.tableRows = [];
+
+    $scope.createData = createData;
+    $scope.updateData = updateData;
+    $scope.deleteData = deleteData;
+
     function clearSearchTerm() {
         $scope.searchTerm = '';
 
@@ -53,7 +63,7 @@ function homeController($scope, $location, homeService) {
 
     function changeDatabase() {
         $scope.selected = [];
-        connection.query("use " + $scope.selectedDatabase + ";", function(err, rows, cols) {
+        connection.query(format('use {};', $scope.selectedDatabase), function(err, rows, cols) {
             if (err != null) {
                 console.log('ERROR: ' + err);
             } else {
@@ -75,14 +85,22 @@ function homeController($scope, $location, homeService) {
                 $scope.colNames = cols.map(function (col) {
                     return col.name;
                 });
-                $scope.tableData = rows;
+                $scope.tableRows = rows;
             });
         })
     }
 
-    $scope.logItem = function (item) {
-        console.log(item.name, 'was selected');
-    };
+    function createData() {
+
+    }
+
+    function updateData() {
+
+    }
+
+    function deleteData() {
+
+    }
 
     // The md-select directive eats keydown events for some quick select
     // logic. Since we have a search input here, we don't need that logic.
