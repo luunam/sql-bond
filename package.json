@@ -1,0 +1,30 @@
+{
+  "name": "sql-bond",
+  "version": "0.1.0",
+  "description": "A MySQL workbench alternative built with electron and angular",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "keywords": [
+    "Electron",
+    "MySQL",
+    "Angular"
+  ],
+  "author": "Nam Luu",
+  "devDependencies": {
+    "electron": "^1.4.1"
+  },
+  "dependencies": {
+    "angular": "1.5.10",
+    "angular-animate": "1.5.10",
+    "angular-aria": "1.5.10",
+    "angular-material": "^1.1.1",
+    "angular-material-icons": "^0.7.1",
+    "angular-messages": "^1.5.8",
+    "mysql": "^2.12.0",
+    "lato-font": "^2.0.0",
+    "angular-route": "^1.6.1",
+    "angular-material-data-table": "^0.10.10"
+  }
+}

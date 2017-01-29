@@ -1,0 +1,106 @@
+/*=============================== GENERAL TAG ==================================*/
+
+html {
+  font-family: Lato;
+}
+
+/*=============================== MODIFIED TAG ==================================*/
+/* These are angular material tags that I modify */
+md-toolbar {
+  min-height: 0px;
+}
+
+md-divider {
+  background-color: #6097ff;
+}
+
+md-content.sidebar-header {
+  margin: 0px;
+  padding: 15px;
+  padding-left: 10px;
+  text-align: left;
+  background-color: #1976D2;
+  color: white;
+  height: 16px;
+ }
+
+md-content.sidebar-item {
+  margin: 0px;
+  padding: 0px;
+  text-align: left;
+  background-color: #1976D2;
+  color: white;
+}
+
+
+/*=============================== SELF-DEFINED TAG ==================================*/
+.nl-sidebar-custom {
+  position: fixed !important;
+  background-color: #2C80D2 !important;
+}
+
+.nl-sidebar-button {
+  width: 100%;
+  padding: 5px;
+  margin: 0px;
+  text-align: left;
+  background-color: #1976D2;
+  color: white;
+  padding-left: 10px;
+  font-size:75%;
+}
+
+.nl-sidebar-button:hover {
+  background-color: #2196F3 !important;
+}
+
+.nl-sidebar-item-group {
+  background-color: #1976D2;
+}
+
+.nl-sidebar-ul {
+
+  margin: 0;
+  padding: 0;
+}
+
+.nl-main-panel {
+  position: absolute;
+  width: calc(100% - 200px);
+  left: 200px;
+}
+
+.nl-container {
+  margin-left: 80px;
+  margin-right: 80px;
+}
+
+.nl-dropdown-menu {
+  margin: 0px;
+  /* padding: 5px; */
+  background-color: #ca404c;
+  height: 48px;
+}
+
+.nl-dropdown-menu > .md-select-value {
+  color: white !important;
+  padding-left: 10px;
+}
+
+.nl-dropdown-input {
+  width: 100%;
+  padding: 10px;
+}
+
+.nl-main {
+  width: 100%;
+}
+
+.nl-toolbar {
+  background: #222222 !important;
+  color: #f0f0f0;
+  position: fixed;
+  height: 48px;
+  padding: 10px;
+}
+

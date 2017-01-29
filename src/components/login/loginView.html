@@ -1,0 +1,62 @@
+<md-sidenav
+    md-component-id="left"
+    class="md-sidenav-left nl-sidebar-custom"
+    md-is-locked-open="true"
+    style="width: 200px; font-weight: 900;"
+    id="sidebar-menu">
+
+  <md-content class="sidebar-header">
+    SQL Electron
+  </md-content>
+
+  <md-divider></md-divider>
+
+  <md-content class="sidebar-header">
+    Choose connections
+  </md-content>
+  <md-divider></md-divider>
+
+  <md-content flex row="navigation" class="nl-sidebar-item-group">
+    <ul class="nl-sidebar-ul">
+      <div ng-repeat="connection in connections">
+        <li class="sidebar-header">
+          <a class="md-button nl-sidebar-button">{{connection.name}}</a>
+        </li>
+      </div>
+    </ul>
+  </md-content>
+
+</md-sidenav>
+
+<md-content class="nl-main-panel">
+  <h1 align="center" style="margin: 40px;">New Connection</h1>
+
+  <div class="nl-container">
+    <md-input-container class="md-block">
+      <label>Connection Name</label>
+      <input ng-model="connection.name" type="text" value="New Connection">
+    </md-input-container>
+    <md-input-container class="md-block">
+      <label>Host</label>
+      <input ng-model="connection.host" type="text">
+    </md-input-container>
+    <md-input-container class="md-block">
+      <label>Port</label>
+      <input ng-model="connection.port" type="text">
+    </md-input-container>
+    <md-input-container class="md-block">
+      <label>Username</label>
+      <input ng-model="connection.username" type="text">
+    </md-input-container>
+    <md-input-container class="md-block">
+      <label>Password</label>
+      <input ng-model="connection.password" type="password">
+    </md-input-container>
+
+    <md-button class="md-primary md-raised" style="margin: 0;"
+               ng-click="addConnection(connection, handleConnection)">
+      CONNECT
+    </md-button>
+    <label ng-if="errorMessage">{{ errorMessage }}</label>
+  </div>
+</md-content>

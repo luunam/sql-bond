@@ -1,0 +1,98 @@
+<md-sidenav
+    md-component-id="left"
+    class="md-sidenav-left nl-sidebar-custom"
+    md-is-locked-open="true"
+    style="width: 200px; font-weight: 900;"
+    id="sidebar-menu">
+
+  <md-select ng-model="selectedDatabase"
+             md-on-close="clearSearchTerm()"
+             ng-change="changeDatabase()"
+             class="md-no-underline nl-dropdown-menu"
+             placeholder="Choose Database">
+    <md-select-header>
+      <input ng-model="searchTerm"
+             type="search"
+             placeholder="Search for database. .."
+             class="nl-dropdown-input md-text">
+    </md-select-header>
+    <md-optgroup>
+      <md-option ng-value="database" ng-repeat="database in databases |
+              filter:searchTerm">{{database}}</md-option>
+    </md-optgroup>
+  </md-select>
+
+  <md-divider></md-divider>
+  <md-content class="sidebar-header">
+    Tables
+  </md-content>
+  <md-divider></md-divider>
+
+  <md-content flex row="navigation" class="nl-sidebar-item-group">
+    <ul class="nl-sidebar-ul">
+      <div ng-repeat="table in tables">
+        <li class="sidebar-header">
+          <a class="md-button nl-sidebar-button"
+             ng-click="selectTable($index)">
+            {{table.name}}
+          </a>
+        </li>
+      </div>
+    </ul>
+  </md-content>
+  <md-divider></md-divider>
+  <md-content class="sidebar-item" ng-click="logout()">
+    <a class="md-button nl-sidebar-button"
+        style="font-weight: 900; height: 48px;">Logout</a>
+  </md-content>
+
+</md-sidenav>
+
+<div class="nl-main-panel layout-column flex" layout="column">
+  <md-toolbar class="nl-toolbar">
+    <div class="md-title" ng-model="tableName">{{tableName}}</div>
+  </md-toolbar>
+
+  <md-content class="md-scroll-y" layout="column" style="top: 48px;">
+    <md-content layout="column" flex>
+
+      <md-card style="margin: 0px">
+
+        <md-toolbar class="md-table-toolbar alternate" ng-show="selected.length">
+          <div class="md-toolbar-tools" style="height: 48px;">
+            <span>{{selected.length}} {{selected.length > 1 ? 'items' : 'item'}} selected</span>
+          </div>
+        </md-toolbar>
+
+        <md-table-container>
+          <table md-table
+                 md-row-select
+                 multiple
+                 ng-model="selected">
+
+            <thead ng-if="tableData.length > 1" md-head>
+            <tr md-row >
+              <th md-column ng-repeat="col in colNames"><span>{{col}}</span></th>
+            </tr>
+            </thead>
+            <tbody md-body>
+            <tr md-row
+                md-select="row"
+                md-select-id="id"
+                ng-repeat="row in tableData">
+                <td md-cell ng-repeat="(key, value) in row">{{value}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </md-table-container>
+      </md-card>
+    </md-content>
+  </md-content>
+
+  <footer style="height:48px; position: fixed; bottom:0px;">
+    <md-toolbar class="nl-toolbar">
+      <div class="md-title">Footer placeholder</div>
+    </md-toolbar>
+  </footer>
+
+</div>
