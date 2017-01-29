@@ -104,3 +104,14 @@ md-content.sidebar-item {
   padding: 10px;
 }
 
+.nl-content-under-toolbar {
+  position: relative;
+  top: 48px;
+}
+
+.nl-footer {
+  height:48px;
+  position: fixed;
+  bottom:0px;
+}
+

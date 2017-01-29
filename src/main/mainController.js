@@ -1,5 +1,5 @@
 angular
-    .module("mainApp", ['ngMaterial', ''])
+    .module("mainApp", ['ngMaterial'])
     .service()
     .controller("mainController", mainController);
 

@@ -91,10 +91,10 @@
       </md-card>
   </md-content>
 
-  <footer style="height:48px; position: fixed; bottom:0px;">
+  <footer class="nl-footer">
     <md-toolbar class="nl-toolbar" layout="row" layout-align="left center">
-      <md-button ng-click="createData()">Create</md-button>
-      <md-button ng-click="updateData()">Update</md-button>
+      <md-button ng-click="createData($event)">Create</md-button>
+      <md-button ng-click="updateData($event)">Update</md-button>
       <md-button ng-click="deleteData()">Delete</md-button>
       <md-button ng-click="deleteData()">Refresh</md-button>
     </md-toolbar>

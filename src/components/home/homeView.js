@@ -1,6 +1,6 @@
 var format = require('string-format');
 
-angular.module('homeModule', ['ngMaterial', 'ngRoute', 'md.data.table'])
+angular.module('homeModule', ['ngMaterial', 'ngRoute', 'md.data.table', 'ngMdIcons'])
     .config(['$mdThemingProvider', function ($mdThemingProvider) {
         'use strict';
 
@@ -8,9 +8,31 @@ angular.module('homeModule', ['ngMaterial', 'ngRoute', 'md.data.table'])
             .primaryPalette('blue');
     }])
     .service('homeService', homeService)
-    .controller('homeController', homeController);
+    .controller('homeController', homeController)
+    .controller('dialogController', dialogController);
 
 function homeService() {
+    this.setConnection = setConnection;
+    this.getConnection = getConnection;
+    this.setDialogTitle = setDialogTitle;
+    this.getDialogTitle = getDialogTitle;
+
+    function setConnection(conn) {
+        this.connection = conn;
+    }
+
+    function getConnection() {
+        return this.connection;
+    }
+
+    function setDialogTitle(title) {
+        this.title = title
+    }
+
+    function getDialogTitle() {
+        return this.dialogTitle;
+    }
+
     this.getValue = function() {
         return this.myValue;
     };
@@ -20,7 +42,7 @@ function homeService() {
     }
 }
 
-function homeController($scope, $location, homeService) {
+function homeController($scope, $location, homeService, $mdDialog) {
 
     var connection = homeService.getValue();
 
@@ -44,6 +66,7 @@ function homeController($scope, $location, homeService) {
     $scope.changeDatabase = changeDatabase;
     $scope.selectTable = selectTable;
 
+    $scope.tableName = '';
     $scope.tables = [];
     $scope.colNames = [];
     $scope.tableRows = [];
@@ -90,12 +113,43 @@ function homeController($scope, $location, homeService) {
         })
     }
 
-    function createData() {
+    function createData(ev) {
+        console.log($scope.tableName);
+        if (true) {
+
+            homeService.setValue("CREATE NEW TABLE ENTRY");
+            $mdDialog.show({
+                controller: dialogController,
+                templateUrl: 'src/components/home/homeDialog.html',
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+            }).then(function(answer) {
+                    $scope.status = 'You said the information was "' + answer + '".';
+                }, function() {
+                    $scope.status = 'You cancelled the dialog.';
+                });
+        }
 
     }
 
-    function updateData() {
-
+    function updateData(ev) {
+        if ($scope.selected.length > 0) {
+            homeService.setValue("UPDATE TABLE ENTRY");
+            $mdDialog.show({
+                controller: dialogController,
+                templateUrl: 'src/components/home/homeDialog.html',
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+            }).then(function(answer) {
+                $scope.status = 'You said the information was "' + answer + '".';
+            }, function() {
+                $scope.status = 'You cancelled the dialog.';
+            });
+        }
     }
 
     function deleteData() {
@@ -107,4 +161,20 @@ function homeController($scope, $location, homeService) {
     //$element.find('input').on('keydown', function(ev) {
     //    ev.stopPropagation();
     //});
+}
+
+function dialogController($scope, $mdDialog, homeService) {
+    $scope.dialogTitle = homeService.getValue();
+
+    $scope.hide = function () {
+        $mdDialog.hide();
+    };
+
+    $scope.cancel = function () {
+        $mdDialog.cancel();
+    };
+
+    $scope.answer = function (answer) {
+        $mdDialog.hide(answer);
+    };
 }
