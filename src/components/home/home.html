@@ -83,7 +83,9 @@
                 md-select="row"
                 md-select-id="id"
                 ng-repeat="row in tableRows">
-                <td md-cell ng-repeat="(key, value) in row">{{value}}</td>
+                <td ng-click="clickColumn($event, value)"
+                    md-cell
+                    ng-repeat="(key, value) in row">{{value}}</td>
             </tr>
             </tbody>
           </table>
@@ -97,6 +99,7 @@
       <md-button ng-click="updateData($event)">Update</md-button>
       <md-button ng-click="deleteData()">Delete</md-button>
       <md-button ng-click="deleteData()">Refresh</md-button>
+      <md-button ng-click="deleteData()">Help</md-button>
     </md-toolbar>
   </footer>
 

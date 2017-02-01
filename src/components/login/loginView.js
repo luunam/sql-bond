@@ -32,6 +32,7 @@ function loginMenuController ($scope, $location, $rootScope, loginService) {
     $scope.errorMessage = '';
     $scope.addConnection = addConnection;
     $scope.handleConnection = handleConnection;
+    $scope.clearInputFields = clearInputFields;
 
     function addConnection(connection, callback) {
         var newConnection = {
@@ -59,7 +60,9 @@ function loginMenuController ($scope, $location, $rootScope, loginService) {
     function handleConnection(err, newConnection) {
         if (err != null) {
             console.log("ERROR: " + err);
-            $scope.errorMessage = 'Connection Fail';
+            $scope.$apply(function() {
+                $scope.errorMessage = 'Connect Fail!';
+            });
         } else {
             console.log("CONNECT SUCCESSFUL");
             $scope.connections.push(newConnection);
@@ -70,5 +73,9 @@ function loginMenuController ($scope, $location, $rootScope, loginService) {
                 console.log($location.path());
             });
         }
+    }
+
+    function clearInputFields() {
+        $scope.connection = {};
     }
 }

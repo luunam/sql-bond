@@ -42,9 +42,14 @@ function homeService() {
     }
 }
 
-function homeController($scope, $location, homeService, $mdDialog) {
+function homeController($scope, $location, homeService, $mdDialog, $mdEditDialog) {
 
     var connection = homeService.getValue();
+
+    connection.on('error', function(err) {
+        console.log('some thing bad happened');
+        console.log(err.code); // 'ER_BAD_DB_ERROR'
+    });
 
     connection.query('SHOW DATABASES;', function(err, rows, cols) {
         if (err != null) {
@@ -75,12 +80,15 @@ function homeController($scope, $location, homeService, $mdDialog) {
     $scope.updateData = updateData;
     $scope.deleteData = deleteData;
 
+    $scope.clickColumn = clickColumn;
+
     function clearSearchTerm() {
         $scope.searchTerm = '';
 
     }
 
     function logout() {
+        connection.end();
         $location.path('/');
     }
 
@@ -116,7 +124,6 @@ function homeController($scope, $location, homeService, $mdDialog) {
     function createData(ev) {
         console.log($scope.tableName);
         if (true) {
-
             homeService.setValue("CREATE NEW TABLE ENTRY");
             $mdDialog.show({
                 controller: dialogController,
@@ -156,6 +163,29 @@ function homeController($scope, $location, homeService, $mdDialog) {
 
     }
 
+    function clickColumn(event, val) {
+        event.stopPropagation(); // in case autoselect is enabled
+
+        var editDialog = {
+            modelValue: val,
+            placeholder: 'Insert value',
+            targetEvent: event,
+            title: 'Insert Value',
+            validators: {
+            }
+        };
+
+        var promise = $mdEditDialog.small(editDialog);
+
+
+        promise.then(function (ctrl) {
+            var input = ctrl.getInput();
+
+            input.$viewChangeListeners.push(function () {
+                //input.$setValidity('test', val !== 'test');
+            });
+        });
+    }
     // The md-select directive eats keydown events for some quick select
     // logic. Since we have a search input here, we don't need that logic.
     //$element.find('input').on('keydown', function(ev) {

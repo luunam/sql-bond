@@ -6,7 +6,7 @@
     id="sidebar-menu">
 
   <md-content class="sidebar-header">
-    SQL Electron
+    SQL Bond
   </md-content>
 
   <md-divider></md-divider>
@@ -29,7 +29,7 @@
 </md-sidenav>
 
 <md-content class="nl-main-panel">
-  <h1 align="center" style="margin: 40px;">New Connection</h1>
+  <h1 align="center" style="margin: 45px;">New Connection</h1>
 
   <div class="nl-container">
     <md-input-container class="md-block">
@@ -53,9 +53,13 @@
       <input ng-model="connection.password" type="password">
     </md-input-container>
 
-    <md-button class="md-primary md-raised" style="margin: 0;"
+    <md-button class="md-primary md-raised nl-button"
                ng-click="addConnection(connection, handleConnection)">
       CONNECT
+    </md-button>
+    <md-button class="md-primary md-raised nl-button"
+               ng-click="clearInputFields()">
+      CLEAR
     </md-button>
     <label ng-if="errorMessage">{{ errorMessage }}</label>
   </div>

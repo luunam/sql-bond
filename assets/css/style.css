@@ -32,7 +32,10 @@ md-content.sidebar-item {
   color: white;
 }
 
-
+md-input-container {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
 /*=============================== SELF-DEFINED TAG ==================================*/
 .nl-sidebar-custom {
   position: fixed !important;
@@ -115,3 +118,7 @@ md-content.sidebar-item {
   bottom:0px;
 }
 
+.nl-button {
+  margin: 0;
+  margin-right: 10px;
+}
