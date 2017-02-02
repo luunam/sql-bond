@@ -1,50 +1,11 @@
+angular.module('homeModule')
+    .controller('homeController', homeController);
+
 var format = require('string-format');
 
-angular.module('homeModule', ['ngMaterial', 'ngRoute', 'md.data.table', 'ngMdIcons'])
-    .config(['$mdThemingProvider', function ($mdThemingProvider) {
-        'use strict';
+function homeController($scope, $location, databaseConnectionService, $mdDialog, $mdEditDialog) {
 
-        $mdThemingProvider.theme('default')
-            .primaryPalette('blue');
-    }])
-    .service('homeService', homeService)
-    .controller('homeController', homeController)
-    .controller('dialogController', dialogController);
-
-function homeService() {
-    this.setConnection = setConnection;
-    this.getConnection = getConnection;
-    this.setDialogTitle = setDialogTitle;
-    this.getDialogTitle = getDialogTitle;
-
-    function setConnection(conn) {
-        this.connection = conn;
-    }
-
-    function getConnection() {
-        return this.connection;
-    }
-
-    function setDialogTitle(title) {
-        this.title = title
-    }
-
-    function getDialogTitle() {
-        return this.dialogTitle;
-    }
-
-    this.getValue = function() {
-        return this.myValue;
-    };
-
-    this.setValue = function(newValue) {
-        this.myValue = newValue;
-    }
-}
-
-function homeController($scope, $location, homeService, $mdDialog, $mdEditDialog) {
-
-    var connection = homeService.getValue();
+    var connection = databaseConnectionService.getValue();
 
     connection.on('error', function(err) {
         console.log('some thing bad happened');
@@ -56,35 +17,54 @@ function homeController($scope, $location, homeService, $mdDialog, $mdEditDialog
             console.log('ERROR: ' + err);
         } else {
             $scope.databases = rows.map(function(row) {
-               return row.Database;
+                return row.Database;
             });
         }
     });
 
-    //$scope.databases = ['Corn' ,'Onions' ,'Kale' ,'Arugula' ,'Peas', 'Zucchini'];
     $scope.searchTerm = '';
+
+    // The database that user selects
     $scope.selectedDatabase = '';
+
+    // The list of row that user selects
     $scope.selected = [];
 
-    $scope.logout = logout;
-    $scope.clearSearchTerm = clearSearchTerm;
-    $scope.changeDatabase = changeDatabase;
-    $scope.selectTable = selectTable;
+    // Name of the table that user selects
+    $scope.selectedTable = '';
 
-    $scope.tableName = '';
     $scope.tables = [];
     $scope.colNames = [];
     $scope.tableRows = [];
 
-    $scope.createData = createData;
+    // Functions that handle 4 footer buttons
+    $scope.insertData = insertData;
     $scope.updateData = updateData;
     $scope.deleteData = deleteData;
+    $scope.refreshData = refreshData;
+    $scope.showHelp = showHelp;
 
-    $scope.clickColumn = clickColumn;
+    // Functions that handle user click on 1 cell
+    $scope.clickCell = clickCell;
 
+    // Logout function
+    $scope.logout = logout;
+
+    $scope.clearSearchTerm = clearSearchTerm;
+
+    // This function triggers when user chooses a database
+    $scope.changeDatabase = changeDatabase;
+
+    // This function triggers when user select a table
+    $scope.selectTable = selectTable;
+
+    // Tooltip that is shown when user hovers on 4 footer buttons
+    // We only want to show tooltip if users haven't chosen any table yet.
+    $scope.tooltip = "Select a table first";
+
+    //================================== IMPLEMENTATION =================================
     function clearSearchTerm() {
         $scope.searchTerm = '';
-
     }
 
     function logout() {
@@ -94,6 +74,7 @@ function homeController($scope, $location, homeService, $mdDialog, $mdEditDialog
 
     function changeDatabase() {
         $scope.selected = [];
+        databaseConnectionService.setSelectedDatabase($scope.selectedDatabase);
         connection.query(format('use {};', $scope.selectedDatabase), function(err, rows, cols) {
             if (err != null) {
                 console.log('ERROR: ' + err);
@@ -110,9 +91,11 @@ function homeController($scope, $location, homeService, $mdDialog, $mdEditDialog
 
     function selectTable(tableIdx) {
         $scope.selected = [];
-        $scope.tableName = $scope.tables[tableIdx].name;
-        connection.query("select * from " + $scope.tableName + ";", function(err, rows, cols) {
+        $scope.selectedTable = $scope.tables[tableIdx].name;
+        databaseConnectionService.setSelectedTable($scope.selectedTable);
+        connection.query("select * from " + $scope.selectedTable + ";", function(err, rows, cols) {
             $scope.$apply(function() {
+                $scope.tooltip = "";
                 $scope.colNames = cols.map(function (col) {
                     return col.name;
                 });
@@ -121,10 +104,17 @@ function homeController($scope, $location, homeService, $mdDialog, $mdEditDialog
         })
     }
 
-    function createData(ev) {
-        console.log($scope.tableName);
+    function insertData(ev) {
+        console.log($scope.selectedTable);
         if (true) {
-            homeService.setValue("CREATE NEW TABLE ENTRY");
+            databaseConnectionService.setDialogTitle("INSERT NEW ENTRY");
+
+            var rowInfo = {};
+            $scope.colNames.forEach(function(name) {
+                rowInfo[name] = '';
+            });
+            databaseConnectionService.setRowInfo(rowInfo);
+
             $mdDialog.show({
                 controller: dialogController,
                 templateUrl: 'src/components/home/homeDialog.html',
@@ -133,17 +123,17 @@ function homeController($scope, $location, homeService, $mdDialog, $mdEditDialog
                 clickOutsideToClose: false,
                 fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
             }).then(function(answer) {
-                    $scope.status = 'You said the information was "' + answer + '".';
-                }, function() {
-                    $scope.status = 'You cancelled the dialog.';
-                });
+                $scope.status = 'You said the information was "' + answer + '".';
+            }, function() {
+                $scope.status = 'You cancelled the dialog.';
+            });
         }
 
     }
 
     function updateData(ev) {
         if ($scope.selected.length > 0) {
-            homeService.setValue("UPDATE TABLE ENTRY");
+            databaseConnectionService.setValue("UPDATE TABLE ENTRY");
             $mdDialog.show({
                 controller: dialogController,
                 templateUrl: 'src/components/home/homeDialog.html',
@@ -163,7 +153,15 @@ function homeController($scope, $location, homeService, $mdDialog, $mdEditDialog
 
     }
 
-    function clickColumn(event, val) {
+    function refreshData() {
+
+    }
+
+    function showHelp() {
+
+    }
+
+    function clickCell(event, val) {
         event.stopPropagation(); // in case autoselect is enabled
 
         var editDialog = {
@@ -186,25 +184,10 @@ function homeController($scope, $location, homeService, $mdDialog, $mdEditDialog
             });
         });
     }
+
     // The md-select directive eats keydown events for some quick select
     // logic. Since we have a search input here, we don't need that logic.
     //$element.find('input').on('keydown', function(ev) {
     //    ev.stopPropagation();
     //});
-}
-
-function dialogController($scope, $mdDialog, homeService) {
-    $scope.dialogTitle = homeService.getValue();
-
-    $scope.hide = function () {
-        $mdDialog.hide();
-    };
-
-    $scope.cancel = function () {
-        $mdDialog.cancel();
-    };
-
-    $scope.answer = function (answer) {
-        $mdDialog.hide(answer);
-    };
 }

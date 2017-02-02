@@ -50,10 +50,10 @@
 
 <div class="nl-main-panel layout-column flex" layout="column">
   <md-toolbar class="nl-toolbar">
-    <div class="md-title" ng-model="tableName">{{tableName}}</div>
+    <div class="md-title" ng-model="tableName">{{selectedTable}}</div>
   </md-toolbar>
 
-  <md-content class="md-scroll-y" layout="column" style="top: 48px;">
+  <md-content class="md-scroll-y nl-content-under-toolbar" layout="column">
 
       <md-card style="margin: 0px">
 
@@ -83,7 +83,7 @@
                 md-select="row"
                 md-select-id="id"
                 ng-repeat="row in tableRows">
-                <td ng-click="clickColumn($event, value)"
+                <td ng-click="clickCell($event, value)"
                     md-cell
                     ng-repeat="(key, value) in row">{{value}}</td>
             </tr>
@@ -95,11 +95,33 @@
 
   <footer class="nl-footer">
     <md-toolbar class="nl-toolbar" layout="row" layout-align="left center">
-      <md-button ng-click="createData($event)">Create</md-button>
-      <md-button ng-click="updateData($event)">Update</md-button>
-      <md-button ng-click="deleteData()">Delete</md-button>
-      <md-button ng-click="deleteData()">Refresh</md-button>
-      <md-button ng-click="deleteData()">Help</md-button>
+      <md-button ng-click="insertData($event)">
+        <md-tooltip
+            md-direction="top"
+            ng-model="tooltip">
+          {{tooltip}}
+        </md-tooltip>
+        Insert
+      </md-button>
+      <md-button ng-click="updateData($event)">
+        <md-tooltip
+            md-direction="top"
+            ng-model="tooltip">
+          {{tooltip}}
+        </md-tooltip>Update</md-button>
+      <md-button ng-click="deleteData()">
+        <md-tooltip
+            md-direction="top"
+            ng-model="tooltip">
+          {{tooltip}}
+        </md-tooltip>Delete</md-button>
+      <md-button ng-click="refreshData()">
+        <md-tooltip
+            md-direction="top"
+            ng-model="tooltip">
+          {{tooltip}}
+        </md-tooltip>Refresh</md-button>
+      <md-button ng-click="showHelp()">Help</md-button>
     </md-toolbar>
   </footer>
 

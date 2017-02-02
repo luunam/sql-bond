@@ -4,13 +4,13 @@ angular.module('loginMenuModule', ['ngMaterial', 'ngRoute', 'homeModule'])
     .service('loginService', loginService)
     .controller('loginMenuController', loginMenuController);
 
-function loginService(homeService) {
+function loginService(databaseConnectionService) {
     this.getValue = function() {
-        return homeService.getValue();
+        return databaseConnectionService.getValue();
     };
 
     this.setValue = function(val) {
-        homeService.setValue(val);
+        databaseConnectionService.setValue(val);
     }
 }
 

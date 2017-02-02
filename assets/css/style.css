@@ -108,8 +108,8 @@ md-input-container {
 }
 
 .nl-content-under-toolbar {
-  position: relative;
   top: 48px;
+  padding-bottom: 48px;
 }
 
 .nl-footer {
@@ -121,4 +121,12 @@ md-input-container {
 .nl-button {
   margin: 0;
   margin-right: 10px;
+}
+
+.nl-no-margin {
+  margin: 0;
+}
+
+.nl-small-padding {
+  padding: 15px;
 }
