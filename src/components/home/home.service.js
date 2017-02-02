@@ -1,54 +1,54 @@
 angular.module('homeModule')
-    .service('databaseConnectionService', databaseConnectionService);
+  .service('databaseConnectionService', databaseConnectionService);
 
 function databaseConnectionService() {
-    this.connection = {};
+  this.connection = {};
 
-    this.getSelectedDatabase = function() {
-        return this.selectedDatabase;
-    };
+  this.getSelectedDatabase = function () {
+    return this.selectedDatabase;
+  };
 
-    this.setSelectedDatabase = function(newValue) {
-        this.selectedDatabase = newValue;
-    };
+  this.setSelectedDatabase = function (newValue) {
+    this.selectedDatabase = newValue;
+  };
 
-    this.getSelectedTable = function() {
-        return this.selectedTable;
-    };
+  this.getSelectedTable = function () {
+    return this.selectedTable;
+  };
 
-    this.setSelectedTable = function(newValue) {
-        this.selectedTable = newValue;
-    };
+  this.setSelectedTable = function (newValue) {
+    this.selectedTable = newValue;
+  };
 
-    this.getValue = function() {
-        return this.connection;
-    };
+  this.getValue = function () {
+    return this.connection;
+  };
 
-    this.setValue = function(newValue) {
-        this.connection = newValue;
-    };
+  this.setValue = function (newValue) {
+    this.connection = newValue;
+  };
 
-    this.getDialogTitle = function() {
-        return this.dialogTitle;
-    };
+  this.getDialogTitle = function () {
+    return this.dialogTitle;
+  };
 
-    this.setDialogTitle = function(newValue) {
-        this.dialogTitle = newValue;
-    };
+  this.setDialogTitle = function (newValue) {
+    this.dialogTitle = newValue;
+  };
 
-    this.getData = function() {
-        return this.data;
-    };
+  this.getData = function () {
+    return this.data;
+  };
 
-    this.setData = function(newValue) {
-        this.data = newValue;
-    };
+  this.setData = function (newValue) {
+    this.data = newValue;
+  };
 
-    this.getRowInfo = function() {
-        return this.rowInfo;
-    };
+  this.getRowInfo = function () {
+    return this.rowInfo;
+  };
 
-    this.setRowInfo = function(newValue) {
-        this.rowInfo = newValue;
-    };
+  this.setRowInfo = function (newValue) {
+    this.rowInfo = newValue;
+  };
 }
