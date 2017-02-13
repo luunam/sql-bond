@@ -98,29 +98,24 @@
       <md-button ng-click="insertData($event)">
         <md-tooltip
             md-direction="top"
-            ng-model="tooltip">
-          {{tooltip}}
+            ng-model="insertTooltip">
+          {{insertTooltip}}
         </md-tooltip>
         Insert
       </md-button>
       <md-button ng-click="updateData($event)">
         <md-tooltip
             md-direction="top"
-            ng-model="tooltip">
-          {{tooltip}}
+            ng-model="updateAndDeleteTooltip">
+          {{updateAndDeleteTooltip}}
         </md-tooltip>Update</md-button>
       <md-button ng-click="deleteData()">
         <md-tooltip
             md-direction="top"
-            ng-model="tooltip">
-          {{tooltip}}
+            ng-model="updateAndDeleteTooltip">
+          {{updateAndDeleteTooltip}}
         </md-tooltip>Delete</md-button>
-      <md-button ng-click="refreshData()">
-        <md-tooltip
-            md-direction="top"
-            ng-model="tooltip">
-          {{tooltip}}
-        </md-tooltip>Refresh</md-button>
+      <md-button ng-click="refreshData()">Refresh</md-button>
       <md-button ng-click="showHelp()">Help</md-button>
     </md-toolbar>
   </footer>
