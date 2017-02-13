@@ -1,6 +1,7 @@
 (function() {
   angular.module('sqlBond')
-    .controller('HomeController', HomeController);
+    .controller('HomeController', HomeController)
+    .controller('HomeDialogController', HomeDialogController);
 
   var format = require('string-format');
 
@@ -122,8 +123,8 @@
         DatabaseConnectionService.setRowInfo(rowInfo);
 
         $mdDialog.show({
-          controller: dialogController,
-          templateUrl: 'app/components/home/home-dialog.view.html',
+          controller: HomeDialogController,
+          templateUrl: 'components/views/home/templates/home-dialog.view.html',
           parent: angular.element(document.body),
           targetEvent: ev,
           clickOutsideToClose: false,
@@ -147,8 +148,8 @@
         DatabaseConnectionService.setRowInfo($scope.selected[0]);
 
         $mdDialog.show({
-          controller: dialogController,
-          templateUrl: 'app/components/home/home-dialog.view.html',
+          controller: HomeDialogController,
+          templateUrl: 'app/components/views/home/home-dialog.view.html',
           parent: angular.element(document.body),
           targetEvent: ev,
           clickOutsideToClose: false,
@@ -201,5 +202,56 @@
     //$element.find('input').on('keydown', function(ev) {
     //    ev.stopPropagation();
     //});
+  }
+
+  function HomeDialogController($scope, $mdDialog, DatabaseConnectionService) {
+    $scope.dialogTitle = DatabaseConnectionService.getDialogTitle();
+    $scope.rowInfo = DatabaseConnectionService.getRowInfo();
+
+    var connection = DatabaseConnectionService.getConnection();
+
+    $scope.execute = execute;
+    $scope.cancel = cancel;
+
+    $scope.hide = function () {
+      $mdDialog.hide();
+    };
+
+    $scope.answer = function (answer) {
+      $mdDialog.hide(answer);
+    };
+
+    function execute() {
+      var cols = ' (';
+      var vals = ' (';
+      var count = 0;
+      for (var k in $scope.rowInfo) {
+        count++;
+        cols += '`' + k + '`';
+        vals += '"' + $scope.rowInfo[k] + '"';
+
+        if (count < Object.keys($scope.rowInfo).length) {
+          cols += ', ';
+          vals += ', ';
+        }
+      }
+      cols += ' )';
+      vals += ' )';
+      console.log(cols);
+      console.log(vals);
+
+      var query = format('INSERT INTO {0} {1} VALUES {2};',
+        DatabaseConnectionService.getSelectedTable(), cols, vals);
+
+      console.log(query);
+
+      connection.query(query, function (err) {
+        console.log(err);
+      });
+    }
+
+    function cancel() {
+      $mdDialog.cancel();
+    }
   }
 })();
