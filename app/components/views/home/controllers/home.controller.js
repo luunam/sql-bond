@@ -1,3 +1,9 @@
+// TODO: Move query builder to DatabaseConnectionService
+// TODO: Handle cases when table has 0 or multiple columns as primary key
+// TODO: Show SQL query errors to users
+// TODO: Remove all console logs
+// TODO: Implement Help Button
+
 (function() {
   angular.module('sqlBond')
     .controller('HomeController', HomeController)
@@ -38,6 +44,7 @@
 
     // Name of the table that user selects
     vm.selectedTable = '';
+    vm.primaryKey = '';
 
     vm.tables = [];
     vm.colNames = [];
@@ -112,7 +119,7 @@
         if (err != null) {
           console.log(err);
         } else {
-
+          vm.primaryKey = rows[0]['Column_name'];
           var tableInfo = {
             name: tableName,
             primaryKey: rows[0]['Column_name']
@@ -176,8 +183,6 @@
       if (vm.selected.length > 0) {
         vm.updateAndDeleteTooltip = '';
 
-        console.log(vm.selected[0]);
-        console.log(vm.selectedDatabase);
         HomeDialogService.setDialogTitle("UPDATE TABLE ENTRY");
         DatabaseConnectionService.setRowInfo(vm.selected[0]);
 
@@ -199,7 +204,16 @@
     }
 
     function deleteData() {
+      var condition = format("{0} = {1}", vm.primaryKey, vm.selected[0][vm.primaryKey]);
+      var query = format("DELETE FROM {0} WHERE {1}", vm.selectedTable, condition);
 
+      connection.query(query, function(err) {
+        if (err) {
+          console.log(err);
+        } else {
+          showData(vm.selectedTable);
+        }
+      });
     }
 
     function refreshData() {
@@ -308,6 +322,9 @@
     }
 
     function execute() {
+      // Build UPDATE query
+      // Essentially we want our update query to look like this:
+      // UPDATE table_name SET field1=value1, field2=value2 ... WHERE primary_key=value
       var setStatement = '';
       var count = 1;
       for (var k in vm.rowInfo) {
@@ -335,6 +352,8 @@
     }
 
     function disablePrimaryKey(columnName) {
+      // Since this is batch update we don't want user to change primary
+      // key value, else we don't know how to update table's entry
       return columnName === vm.tableInfo.primaryKey;
     }
   }
