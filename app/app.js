@@ -4,6 +4,6 @@
     'ngMaterial',
     'md.data.table',
     'ngMdIcons'
-  ])
+  ]);
 })();
 

@@ -50,6 +50,7 @@
     vm.colNames = [];
     vm.tableRows = [];
 
+    //============================== FUNCTION DECLARATION =============================
     vm.showData = showData;
     // Functions that handle 4 footer buttons
     vm.insertData = insertData;
@@ -104,7 +105,7 @@
             } else {
               vm.tables = rows.map(function (table) {
                 return {name: table['Tables_in_' + vm.selectedDatabase]};
-              })
+              });
             }
           });
         }

@@ -1,3 +1,4 @@
+[![bitHound Overall Score](https://www.bithound.io/github/luunam/sql-bond/badges/score.svg)](https://www.bithound.io/github/luunam/sql-bond)
 [![bitHound Dependencies](https://www.bithound.io/github/luunam/sql-bond/badges/dependencies.svg)](https://www.bithound.io/github/luunam/sql-bond/master/dependencies/npm)
 
 # SQL BOND

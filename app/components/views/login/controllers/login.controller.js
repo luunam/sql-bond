@@ -5,8 +5,6 @@
     .controller('LoginController', LoginController);
 
   function LoginController($scope, $location, $rootScope, DatabaseConnectionService) {
-    console.log('SUCCESS');
-
     $scope.connections = [
       //{ 'name': 'Test connection 1' },
       //{ 'name': 'Test connection 2' }
@@ -25,13 +23,7 @@
     $scope.clearInputFields = clearInputFields;
 
     function addConnection(connection, callback) {
-      var newConnection = {
-        name: connection.name,
-        username: connection.username,
-        password: connection.password,
-        host: connection.host,
-        port: connection.port
-      };
+      var newConnection = angular.copy(connection);
 
       $scope.connection = {};
 
@@ -54,7 +46,6 @@
           $scope.errorMessage = 'Connect Fail!';
         });
       } else {
-        console.log("CONNECT SUCCESSFUL");
         $scope.connections.push(newConnection);
 
         $rootScope.$apply(function () {
