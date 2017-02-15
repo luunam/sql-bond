@@ -15,7 +15,7 @@ let mainWindow;
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600, title: "", minWidth: 800, minHeight: 600})
+  mainWindow = new BrowserWindow({width: 800, height: 600, title: "", minWidth: 800, minHeight: 600});
   //mainWindow.maximize()
   // and load the index_semantic.html of the app.
   mainWindow.loadURL(url.format({

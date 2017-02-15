@@ -40,7 +40,7 @@
     }
 
     function handleConnection(err, newConnection) {
-      if (err != null) {
+      if (err !== null) {
         console.log("ERROR: " + err);
         $scope.$apply(function () {
           $scope.errorMessage = 'Connect Fail!';
