@@ -5,20 +5,20 @@
     style="width: 200px; font-weight: 900;"
     id="sidebar-menu">
 
-  <md-select ng-model="selectedDatabase"
-             md-on-close="clearSearchTerm()"
-             ng-change="changeDatabase()"
+  <md-select ng-model="model.selectedDatabase"
+             md-on-close="model.clearSearchTerm()"
+             ng-change="model.changeDatabase()"
              class="md-no-underline nl-dropdown-menu"
              placeholder="Choose Database">
     <md-select-header>
-      <input ng-model="searchTerm"
+      <input ng-model="model.searchTerm"
              type="search"
              placeholder="Search for database. .."
              class="nl-dropdown-input md-text">
     </md-select-header>
     <md-optgroup>
-      <md-option ng-value="database" ng-repeat="database in databases |
-              filter:searchTerm">{{database}}</md-option>
+      <md-option ng-value="database" ng-repeat="database in model.databases |
+              filter:model.searchTerm">{{database}}</md-option>
     </md-optgroup>
   </md-select>
 
@@ -30,10 +30,10 @@
 
   <md-content flex row="navigation" class="nl-sidebar-item-group">
     <ul class="nl-sidebar-ul">
-      <div ng-repeat="table in tables">
+      <div ng-repeat="table in model.tables">
         <li class="sidebar-header">
           <a class="md-button nl-sidebar-button"
-             ng-click="selectTable($index)">
+             ng-click="model.selectTable($index)">
             {{table.name}}
           </a>
         </li>
@@ -41,7 +41,7 @@
     </ul>
   </md-content>
   <md-divider></md-divider>
-  <md-content class="sidebar-item" ng-click="logout()">
+  <md-content class="sidebar-item" ng-click="model.logout()">
     <a class="md-button nl-sidebar-button"
         style="font-weight: 900; height: 48px;">Logout</a>
   </md-content>
@@ -50,18 +50,18 @@
 
 <div class="nl-main-panel layout-column flex" layout="column">
   <md-toolbar class="nl-toolbar">
-    <div class="md-title" ng-model="tableName">{{selectedTable}}</div>
+    <div class="md-title">{{model.selectedTable}}</div>
   </md-toolbar>
 
   <md-content class="md-scroll-y nl-content-under-toolbar" layout="column">
 
       <md-card style="margin: 0px">
 
-        <md-toolbar class="md-table-toolbar alternate" ng-show="selected.length" style="position: fixed">
+        <md-toolbar class="md-table-toolbar alternate" ng-show="model.selected.length" style="position: fixed">
           <div class="md-toolbar-tools"
                layout="row"
                style="height: 48px;">
-            <span>{{selected.length}} {{selected.length > 1 ? 'items' : 'item'}} selected</span>
+            <span>{{model.selected.length}} {{model.selected.length > 1 ? 'items' : 'item'}} selected</span>
 
           </div>
 
@@ -71,19 +71,19 @@
           <table md-table
                  md-row-select
                  multiple
-                 ng-model="selected">
+                 ng-model="model.selected">
 
-            <thead ng-if="tableRows.length > 1" md-head>
+            <thead ng-if="model.tableRows.length > 1" md-head>
             <tr md-row >
-              <th md-column ng-repeat="col in colNames"><span>{{col}}</span></th>
+              <th md-column ng-repeat="col in model.colNames"><span>{{col}}</span></th>
             </tr>
             </thead>
             <tbody md-body>
             <tr md-row
                 md-select="row"
                 md-select-id="id"
-                ng-repeat="row in tableRows">
-                <td ng-click="clickCell($event, value)"
+                ng-repeat="row in model.tableRows">
+                <td ng-click="model.clickCell($event, value)"
                     md-cell
                     ng-repeat="(key, value) in row">{{value}}</td>
             </tr>
@@ -95,28 +95,28 @@
 
   <footer class="nl-footer">
     <md-toolbar class="nl-toolbar" layout="row" layout-align="left center">
-      <md-button ng-click="insertData($event)">
+      <md-button ng-click="model.insertData($event)">
         <md-tooltip
             md-direction="top"
-            ng-model="insertTooltip">
-          {{insertTooltip}}
+            ng-model="model.insertTooltip">
+          {{model.insertTooltip}}
         </md-tooltip>
         Insert
       </md-button>
-      <md-button ng-click="updateData($event)">
+      <md-button ng-click="model.updateData($event)">
         <md-tooltip
             md-direction="top"
-            ng-model="updateAndDeleteTooltip">
-          {{updateAndDeleteTooltip}}
+            ng-model="model.updateAndDeleteTooltip">
+          {{model.updateAndDeleteTooltip}}
         </md-tooltip>Update</md-button>
-      <md-button ng-click="deleteData()">
+      <md-button ng-click="model.deleteData()">
         <md-tooltip
             md-direction="top"
-            ng-model="updateAndDeleteTooltip">
-          {{updateAndDeleteTooltip}}
+            ng-model="model.updateAndDeleteTooltip">
+          {{model.updateAndDeleteTooltip}}
         </md-tooltip>Delete</md-button>
-      <md-button ng-click="refreshData()">Refresh</md-button>
-      <md-button ng-click="showHelp()">Help</md-button>
+      <md-button ng-click="model.refreshData()">Refresh</md-button>
+      <md-button ng-click="model.showHelp()">Help</md-button>
     </md-toolbar>
   </footer>
 

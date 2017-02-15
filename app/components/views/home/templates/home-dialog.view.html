@@ -1,18 +1,18 @@
 <md-dialog style="height: 500px; width: 500px;">
   <md-toolbar class="nl-toolbar">
-    <md-dialog-content ng-model="dialogTitle">{{dialogTitle}}</md-dialog-content>
+    <md-dialog-content ng-model="dialogTitle">{{model.dialogTitle}}</md-dialog-content>
   </md-toolbar>
   <md-dialog-content class="nl-content-under-toolbar md-scroll-y nl-small-padding"
                      layout="column" style="margin-top:58px; margin-bottom: 48px;">
-      <md-input-container class="md-block" ng-repeat="(key, val) in rowInfo" style="margin: 10px;">
+      <md-input-container class="md-block" ng-repeat="(key, val) in model.rowInfo" style="margin: 10px;">
         <label>{{key}}</label>
-        <input ng-model="rowInfo[key]" type="text">
+        <input ng-model="model.rowInfo[key]" type="text">
       </md-input-container>
   </md-dialog-content>
   <footer class="nl-footer">
     <md-toolbar class="nl-toolbar" layout="row" layout-align="left center">
-      <md-button ng-click="execute()">Execute</md-button>
-      <md-button ng-click="hide()">Cancel</md-button>
+      <md-button ng-click="model.execute()">Execute</md-button>
+      <md-button ng-click="model.cancel()">Cancel</md-button>
     </md-toolbar>
   </footer>
 </md-dialog>

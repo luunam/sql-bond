@@ -1,8 +1,14 @@
 (function() {
   angular.module('sqlBond')
-    .service('DatabaseConnectionService', DatabaseConnectionService);
+    .service('DatabaseConnectionService', DatabaseConnectionService)
+    .service('HomeDialogService', HomeDialogService);
 
   function DatabaseConnectionService() {
+    this.tableInfo = {
+      name: '',
+      primaryKey: ''
+    };
+
     this.getSelectedDatabase = function () {
       return this.selectedDatabase;
     };
@@ -27,14 +33,6 @@
       this.connection = newValue;
     };
 
-    this.getDialogTitle = function () {
-      return this.dialogTitle;
-    };
-
-    this.setDialogTitle = function (newValue) {
-      this.dialogTitle = newValue;
-    };
-
     this.getData = function () {
       return this.data;
     };
@@ -49,6 +47,18 @@
 
     this.setRowInfo = function (newValue) {
       this.rowInfo = newValue;
+    };
+
+
+  }
+
+  function HomeDialogService() {
+    this.getDialogTitle = function () {
+      return this.dialogTitle;
+    };
+
+    this.setDialogTitle = function (newValue) {
+      this.dialogTitle = newValue;
     };
   }
 })();

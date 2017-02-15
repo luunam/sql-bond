@@ -5,7 +5,10 @@
 
   var format = require('string-format');
 
-  function HomeController($scope, $location, DatabaseConnectionService, $mdDialog, $mdEditDialog) {
+  function HomeController($scope, $location, DatabaseConnectionService,
+                          $mdDialog, $mdEditDialog, HomeDialogService) {
+
+    var vm = this;
 
     var connection = DatabaseConnectionService.getConnection();
 
@@ -18,56 +21,59 @@
       if (err != null) {
         console.log('ERROR: ' + err);
       } else {
-        $scope.databases = rows.map(function (row) {
+        vm.databases = rows.map(function (row) {
           return row.Database;
         });
       }
     });
 
-    $scope.searchTerm = '';
+    vm.searchTerm = '';
 
     // The database that user selects
-    $scope.selectedDatabase = '';
+    //vm.selectedDatabase = '';
+
+    vm.selectedDatabase = '';
 
     // The list of row that user selects
-    $scope.selected = [];
+    vm.selected = [];
 
     // Name of the table that user selects
-    $scope.selectedTable = '';
+    vm.selectedTable = '';
 
-    $scope.tables = [];
-    $scope.colNames = [];
-    $scope.tableRows = [];
+    vm.tables = [];
+    vm.colNames = [];
+    vm.tableRows = [];
 
+    vm.showData = showData;
     // Functions that handle 4 footer buttons
-    $scope.insertData = insertData;
-    $scope.updateData = updateData;
-    $scope.deleteData = deleteData;
-    $scope.refreshData = refreshData;
-    $scope.showHelp = showHelp;
+    vm.insertData = insertData;
+    vm.updateData = updateData;
+    vm.deleteData = deleteData;
+    vm.refreshData = refreshData;
+    vm.showHelp = showHelp;
 
     // Functions that handle user click on 1 cell
-    $scope.clickCell = clickCell;
+    vm.clickCell = clickCell;
 
     // Logout function
-    $scope.logout = logout;
+    vm.logout = logout;
 
-    $scope.clearSearchTerm = clearSearchTerm;
+    vm.clearSearchTerm = clearSearchTerm;
 
     // This function triggers when user chooses a database
-    $scope.changeDatabase = changeDatabase;
+    vm.changeDatabase = changeDatabase;
 
     // This function triggers when user select a table
-    $scope.selectTable = selectTable;
+    vm.selectTable = selectTable;
 
     // Tooltip that is shown when user hovers on 4 footer buttons
     // We only want to show insertTooltip if users haven't chosen any table yet.
-    $scope.insertTooltip = "Select a table first";
-    $scope.updateAndDeleteTooltip = "Select a table first";
+    vm.insertTooltip = "Select a table first";
+    vm.updateAndDeleteTooltip = "Select a table first";
 
     //================================== IMPLEMENTATION =================================
     function clearSearchTerm() {
-      $scope.searchTerm = '';
+      vm.searchTerm = '';
     }
 
     function logout() {
@@ -76,51 +82,100 @@
     }
 
     function changeDatabase() {
-      $scope.selected = [];
-      DatabaseConnectionService.setSelectedDatabase($scope.selectedDatabase);
-      connection.query(format('use {};', $scope.selectedDatabase), function (err, rows, cols) {
+      console.log("HERE");
+      vm.selected = [];
+      DatabaseConnectionService.setSelectedDatabase(vm.selectedDatabase);
+
+      var query = format('use {0};', vm.selectedDatabase);
+      console.log(query);
+      connection.query(query, function (err, rows, cols) {
         if (err != null) {
           console.log('ERROR: ' + err);
         } else {
           connection.query("show tables;", function (err, rows, cols) {
-            $scope.tables = rows.map(function (table) {
-              return {name: table['Tables_in_' + $scope.selectedDatabase]}
+            vm.tables = rows.map(function (table) {
+              return {name: table['Tables_in_' + vm.selectedDatabase]}
             })
           });
         }
-      })
+      });
     }
 
     function selectTable(tableIdx) {
-      $scope.selected = [];
-      $scope.selectedTable = $scope.tables[tableIdx].name;
-      DatabaseConnectionService.setSelectedTable($scope.selectedTable);
-      connection.query("select * from " + $scope.selectedTable + ";", function (err, rows, cols) {
+      vm.selected = [];
+
+      var tableName = vm.tables[tableIdx].name;
+
+      vm.selectedTable = tableName;
+      //DatabaseConnectionService.setSelectedTable($scope.selectedTable);
+
+      connection.query(format("show index from {0} where Key_name='PRIMARY'", tableName), function(err, rows, cols) {
+        if (err != null) {
+          console.log(err);
+        } else {
+          console.log(rows[0]['Column_name']);
+          console.log(cols);
+          DatabaseConnectionService.setSelectedTable(tableName);
+        }
+      });
+
+      showData(tableName);
+    }
+
+    function showData(tableName) {
+      connection.query("select * from " + tableName + ";", function (err, rows, cols) {
         if (err != null) {
           console.log(err);
         } else {
           $scope.$apply(function () {
-            $scope.insertTooltip = "";
-            $scope.updateAndDeleteTooltip = "please select a row";
-            $scope.colNames = cols.map(function (col) {
+            vm.insertTooltip = "";
+            vm.updateAndDeleteTooltip = "please select a row";
+            vm.colNames = cols.map(function (col) {
               return col.name;
             });
-            $scope.tableRows = rows;
+            vm.tableRows = rows;
           });
         }
-      })
+      });
     }
 
     function insertData(ev) {
-      console.log($scope.selectedTable);
-      if ($scope.selectedTable != null && $scope.selectedTable != '') {
-        DatabaseConnectionService.setDialogTitle("INSERT NEW ENTRY");
+      console.log(vm.selectedTable);
+      if (vm.selectedTable != null && vm.selectedTable != '') {
+        HomeDialogService.setDialogTitle("INSERT NEW ENTRY");
 
         var rowInfo = {};
-        $scope.colNames.forEach(function (name) {
+        vm.colNames.forEach(function (name) {
           rowInfo[name] = '';
         });
         DatabaseConnectionService.setRowInfo(rowInfo);
+
+        $mdDialog.show({
+          controller: 'HomeDialogController',
+          controllerAs: 'model',
+          templateUrl: 'components/views/home/templates/home-dialog.view.html',
+          parent: angular.element(document.body),
+          targetEvent: ev,
+          clickOutsideToClose: false,
+          fullscreen: vm.customFullscreen // Only for -xs, -sm breakpoints.
+        }).then(function () {
+          console.log('You hide the dialog');
+          showData(vm.selectedTable);
+        }, function () {
+          console.log('You cancelled the dialog.');
+        });
+      }
+
+    }
+
+    function updateData(ev) {
+      if (vm.selected.length > 0) {
+        vm.updateAndDeleteTooltip = '';
+
+        console.log(vm.selected[0]);
+        console.log(vm.selectedDatabase);
+        HomeDialogService.setDialogTitle("UPDATE TABLE ENTRY");
+        DatabaseConnectionService.setRowInfo(vm.selected[0]);
 
         $mdDialog.show({
           controller: HomeDialogController,
@@ -128,36 +183,11 @@
           parent: angular.element(document.body),
           targetEvent: ev,
           clickOutsideToClose: false,
-          fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+          fullscreen: vm.customFullscreen // Only for -xs, -sm breakpoints.
         }).then(function (answer) {
-          $scope.status = 'You said the information was "' + answer + '".';
+          console.log('You hide the dialog');
         }, function () {
-          $scope.status = 'You cancelled the dialog.';
-        });
-      }
-
-    }
-
-    function updateData(ev) {
-      if ($scope.selected.length > 0) {
-        $scope.updateAndDeleteTooltip = '';
-
-        console.log($scope.selected[0]);
-        console.log($scope.selectedDatabase);
-        DatabaseConnectionService.setDialogTitle("UPDATE TABLE ENTRY");
-        DatabaseConnectionService.setRowInfo($scope.selected[0]);
-
-        $mdDialog.show({
-          controller: HomeDialogController,
-          templateUrl: 'app/components/views/home/home-dialog.view.html',
-          parent: angular.element(document.body),
-          targetEvent: ev,
-          clickOutsideToClose: false,
-          fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
-        }).then(function (answer) {
-          $scope.status = 'You said the information was "' + answer + '".';
-        }, function () {
-          $scope.status = 'You cancelled the dialog.';
+          console.log('You cancelled the dialog.');
         });
       }
     }
@@ -204,33 +234,26 @@
     //});
   }
 
-  function HomeDialogController($scope, $mdDialog, DatabaseConnectionService) {
-    $scope.dialogTitle = DatabaseConnectionService.getDialogTitle();
-    $scope.rowInfo = DatabaseConnectionService.getRowInfo();
+  function HomeDialogController($mdDialog, DatabaseConnectionService, HomeDialogService) {
+    var vm = this;
 
-    var connection = DatabaseConnectionService.getConnection();
+    vm.dialogTitle = HomeDialogService.getDialogTitle();
+    vm.rowInfo = DatabaseConnectionService.getRowInfo();
+    vm.connection = DatabaseConnectionService.getConnection();
 
-    $scope.execute = execute;
-    $scope.cancel = cancel;
-
-    $scope.hide = function () {
-      $mdDialog.hide();
-    };
-
-    $scope.answer = function (answer) {
-      $mdDialog.hide(answer);
-    };
+    vm.execute = execute;
+    vm.cancel = cancel;
 
     function execute() {
       var cols = ' (';
       var vals = ' (';
       var count = 0;
-      for (var k in $scope.rowInfo) {
+      for (var k in vm.rowInfo) {
         count++;
         cols += '`' + k + '`';
-        vals += '"' + $scope.rowInfo[k] + '"';
+        vals += '"' + vm.rowInfo[k] + '"';
 
-        if (count < Object.keys($scope.rowInfo).length) {
+        if (count < Object.keys(vm.rowInfo).length) {
           cols += ', ';
           vals += ', ';
         }
@@ -245,8 +268,9 @@
 
       console.log(query);
 
-      connection.query(query, function (err) {
-        console.log(err);
+      vm.connection.query(query, function (err) {
+        console.log('ERROR: ' + err);
+        $mdDialog.hide();
       });
     }
 

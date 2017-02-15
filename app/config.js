@@ -15,7 +15,8 @@
 
         .when('/home', {
           templateUrl: 'components/views/home/templates/home.view.html',
-          controller: 'HomeController'
+          controller: 'HomeController',
+          controllerAs: 'model'
         });
     }]);
 })();
