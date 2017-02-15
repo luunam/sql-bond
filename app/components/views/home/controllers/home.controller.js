@@ -1,7 +1,8 @@
 (function() {
   angular.module('sqlBond')
     .controller('HomeController', HomeController)
-    .controller('HomeDialogController', HomeDialogController);
+    .controller('InsertDialogController', InsertDialogController)
+    .controller('UpdateDialogController', UpdateDialogController);
 
   var format = require('string-format');
 
@@ -30,8 +31,6 @@
     vm.searchTerm = '';
 
     // The database that user selects
-    //vm.selectedDatabase = '';
-
     vm.selectedDatabase = '';
 
     // The list of row that user selects
@@ -107,15 +106,19 @@
       var tableName = vm.tables[tableIdx].name;
 
       vm.selectedTable = tableName;
-      //DatabaseConnectionService.setSelectedTable($scope.selectedTable);
 
+      // Get table's primary key
       connection.query(format("show index from {0} where Key_name='PRIMARY'", tableName), function(err, rows, cols) {
         if (err != null) {
           console.log(err);
         } else {
-          console.log(rows[0]['Column_name']);
-          console.log(cols);
-          DatabaseConnectionService.setSelectedTable(tableName);
+
+          var tableInfo = {
+            name: tableName,
+            primaryKey: rows[0]['Column_name']
+          };
+
+          DatabaseConnectionService.setSelectedTable(tableInfo);
         }
       });
 
@@ -123,6 +126,7 @@
     }
 
     function showData(tableName) {
+      vm.selected = [];
       connection.query("select * from " + tableName + ";", function (err, rows, cols) {
         if (err != null) {
           console.log(err);
@@ -151,7 +155,7 @@
         DatabaseConnectionService.setRowInfo(rowInfo);
 
         $mdDialog.show({
-          controller: 'HomeDialogController',
+          controller: 'InsertDialogController',
           controllerAs: 'model',
           templateUrl: 'components/views/home/templates/home-dialog.view.html',
           parent: angular.element(document.body),
@@ -178,7 +182,8 @@
         DatabaseConnectionService.setRowInfo(vm.selected[0]);
 
         $mdDialog.show({
-          controller: HomeDialogController,
+          controller: 'UpdateDialogController',
+          controllerAs: 'model',
           templateUrl: 'components/views/home/templates/home-dialog.view.html',
           parent: angular.element(document.body),
           targetEvent: ev,
@@ -186,6 +191,7 @@
           fullscreen: vm.customFullscreen // Only for -xs, -sm breakpoints.
         }).then(function (answer) {
           console.log('You hide the dialog');
+          showData(vm.selectedTable);
         }, function () {
           console.log('You cancelled the dialog.');
         });
@@ -197,7 +203,7 @@
     }
 
     function refreshData() {
-
+      showData(vm.selectedTable);
     }
 
     function showHelp() {
@@ -234,15 +240,17 @@
     //});
   }
 
-  function HomeDialogController($mdDialog, DatabaseConnectionService, HomeDialogService) {
+  function InsertDialogController($mdDialog, DatabaseConnectionService, HomeDialogService) {
     var vm = this;
 
     vm.dialogTitle = HomeDialogService.getDialogTitle();
     vm.rowInfo = DatabaseConnectionService.getRowInfo();
     vm.connection = DatabaseConnectionService.getConnection();
+    vm.tableInfo = DatabaseConnectionService.getSelectedTable();
 
     vm.execute = execute;
     vm.cancel = cancel;
+    vm.disablePrimaryKey = disablePrimaryKey;
 
     function execute() {
       var cols = ' (';
@@ -260,11 +268,9 @@
       }
       cols += ' )';
       vals += ' )';
-      console.log(cols);
-      console.log(vals);
 
       var query = format('INSERT INTO {0} {1} VALUES {2};',
-        DatabaseConnectionService.getSelectedTable(), cols, vals);
+        vm.tableInfo.name, cols, vals);
 
       console.log(query);
 
@@ -276,6 +282,60 @@
 
     function cancel() {
       $mdDialog.cancel();
+    }
+
+    function disablePrimaryKey(columnName) {
+      return false;
+    }
+  }
+
+  function UpdateDialogController($mdDialog, DatabaseConnectionService, HomeDialogService) {
+    var vm = this;
+
+    vm.dialogTitle = HomeDialogService.getDialogTitle();
+    vm.rowInfo = DatabaseConnectionService.getRowInfo();
+    vm.connection = DatabaseConnectionService.getConnection();
+    vm.tableInfo = DatabaseConnectionService.getSelectedTable();
+
+    vm.execute = execute;
+    vm.cancel = cancel;
+    vm.disablePrimaryKey = disablePrimaryKey;
+
+    var primaryKey = vm.tableInfo.primaryKey;
+
+    function cancel() {
+      $mdDialog.cancel();
+    }
+
+    function execute() {
+      var setStatement = '';
+      var count = 1;
+      for (var k in vm.rowInfo) {
+        count++;
+        if (k != primaryKey && k != '$$hashKey') {
+          setStatement += '`' + k + '`="' + vm.rowInfo[k] + '"';
+
+          if (count < Object.keys(vm.rowInfo).length) {
+            setStatement += ', ';
+          }
+        }
+      }
+
+      var condition = format("{0} = {1}", primaryKey, vm.rowInfo[primaryKey]);
+
+      var query = format('UPDATE {0} SET {1} WHERE {2};',
+        vm.tableInfo.name, setStatement, condition);
+
+      console.log(query);
+
+      vm.connection.query(query, function (err) {
+        console.log('ERROR: ' + err);
+        $mdDialog.hide();
+      });
+    }
+
+    function disablePrimaryKey(columnName) {
+      return columnName === vm.tableInfo.primaryKey;
     }
   }
 })();

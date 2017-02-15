@@ -6,7 +6,7 @@
                      layout="column" style="margin-top:58px; margin-bottom: 48px;">
       <md-input-container class="md-block" ng-repeat="(key, val) in model.rowInfo" style="margin: 10px;">
         <label>{{key}}</label>
-        <input ng-model="model.rowInfo[key]" type="text">
+        <input ng-model="model.rowInfo[key]" type="text" ng-disabled="model.disablePrimaryKey(key)">
       </md-input-container>
   </md-dialog-content>
   <footer class="nl-footer">

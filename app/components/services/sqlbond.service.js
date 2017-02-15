@@ -4,10 +4,6 @@
     .service('HomeDialogService', HomeDialogService);
 
   function DatabaseConnectionService() {
-    this.tableInfo = {
-      name: '',
-      primaryKey: ''
-    };
 
     this.getSelectedDatabase = function () {
       return this.selectedDatabase;
