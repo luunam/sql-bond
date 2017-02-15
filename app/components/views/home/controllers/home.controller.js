@@ -163,7 +163,7 @@
         vm.colNames.forEach(function (name) {
           rowInfo[name] = '';
         });
-        DatabaseConnectionService.setRowInfo(rowInfo);
+        DatabaseConnectionService.setRowInfo(angular.copy(rowInfo));
 
         $mdDialog.show({
           controller: 'InsertDialogController',
@@ -188,7 +188,7 @@
         vm.updateAndDeleteTooltip = '';
 
         HomeDialogService.setDialogTitle("UPDATE TABLE ENTRY");
-        DatabaseConnectionService.setRowInfo(vm.selected[0]);
+        DatabaseConnectionService.setRowInfo(angular.copy(vm.selected[0]));
 
         $mdDialog.show({
           controller: 'UpdateDialogController',
@@ -208,7 +208,7 @@
     }
 
     function deleteData() {
-      var condition = format("{0} = {1}", vm.primaryKey, vm.selected[0][vm.primaryKey]);
+      var condition = format('{0}="{1}"', vm.primaryKey, vm.selected[0][vm.primaryKey]);
       var query = format("DELETE FROM {0} WHERE {1}", vm.selectedTable, condition);
 
       connection.query(query, function(err) {
@@ -330,7 +330,7 @@
       // Essentially we want our update query to look like this:
       // UPDATE table_name SET field1=value1, field2=value2 ... WHERE primary_key=value
       var setStatement = '';
-      var count = 1;
+      var count = 0;
       for (var k in vm.rowInfo) {
         count++;
         if (k != primaryKey && k != '$$hashKey') {
@@ -342,7 +342,7 @@
         }
       }
 
-      var condition = format("{0} = {1}", primaryKey, vm.rowInfo[primaryKey]);
+      var condition = format('{0}="{1}"', primaryKey, vm.rowInfo[primaryKey]);
 
       var query = format('UPDATE {0} SET {1} WHERE {2};',
         vm.tableInfo.name, setStatement, condition);

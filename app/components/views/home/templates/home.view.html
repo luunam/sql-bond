@@ -73,7 +73,7 @@
                  multiple
                  ng-model="model.selected">
 
-            <thead ng-if="model.tableRows.length > 1" md-head>
+            <thead ng-if="model.tableRows.length > 0" md-head>
             <tr md-row >
               <th md-column ng-repeat="col in model.colNames"><span>{{col}}</span></th>
             </tr>
