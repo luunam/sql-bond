@@ -13,6 +13,7 @@
   ],
   "author": "Nam Luu",
   "devDependencies": {
+    "bithound": "^1.7.0",
     "electron": "^1.4.1"
   },
   "dependencies": {

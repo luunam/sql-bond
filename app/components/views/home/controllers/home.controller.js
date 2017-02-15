@@ -25,7 +25,7 @@
     });
 
     connection.query('SHOW DATABASES;', function (err, rows, cols) {
-      if (err != null) {
+      if (err !== null) {
         console.log('ERROR: ' + err);
       } else {
         vm.databases = rows.map(function (row) {
@@ -95,13 +95,17 @@
       var query = format('use {0};', vm.selectedDatabase);
       console.log(query);
       connection.query(query, function (err, rows, cols) {
-        if (err != null) {
+        if (err !== null) {
           console.log('ERROR: ' + err);
         } else {
           connection.query("show tables;", function (err, rows, cols) {
-            vm.tables = rows.map(function (table) {
-              return {name: table['Tables_in_' + vm.selectedDatabase]}
-            })
+            if (err !== null) {
+              console.log('ERROR: ' + err);
+            } else {
+              vm.tables = rows.map(function (table) {
+                return {name: table['Tables_in_' + vm.selectedDatabase]};
+              })
+            }
           });
         }
       });
@@ -116,7 +120,7 @@
 
       // Get table's primary key
       connection.query(format("show index from {0} where Key_name='PRIMARY'", tableName), function(err, rows, cols) {
-        if (err != null) {
+        if (err !== null) {
           console.log(err);
         } else {
           vm.primaryKey = rows[0]['Column_name'];
@@ -135,7 +139,7 @@
     function showData(tableName) {
       vm.selected = [];
       connection.query("select * from " + tableName + ";", function (err, rows, cols) {
-        if (err != null) {
+        if (err !== null) {
           console.log(err);
         } else {
           $scope.$apply(function () {
@@ -152,7 +156,7 @@
 
     function insertData(ev) {
       console.log(vm.selectedTable);
-      if (vm.selectedTable != null && vm.selectedTable != '') {
+      if (vm.selectedTable !== null && vm.selectedTable != '') {
         HomeDialogService.setDialogTitle("INSERT NEW ENTRY");
 
         var rowInfo = {};
